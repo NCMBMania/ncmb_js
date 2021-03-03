@@ -173,6 +173,36 @@ describe("NCMB Users", function(){
     var password = null;
     var sessionToken = null;
     describe("login", function(){
+      context("If the property has userName, password with special character: !$()*;", function(){
+        beforeEach(function(){
+          userName = "test";
+          password = "test!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~test";
+          user = new ncmb.User({userName: userName, password: password});
+        });
+        it("callback でレスポンスを取得できる", function(done){
+          if(!ncmb.stub){
+            user.userName = callback_name;
+            user.password = callback_password;
+          }
+          user.login(function(err, data){
+            if(err){
+              done(err);
+            }else{
+              expect(data).to.have.property("sessionToken");
+              done();
+            }
+          });
+        });
+      });
+    });
+  });
+
+  describe("ID/PWユーザでログイン", function(){
+    var user = null;
+    var userName = null;
+    var password = null;
+    var sessionToken = null;
+    describe("login", function(){
       context("プロパティにuserName, passwordがあればログインに成功して", function(){
         beforeEach(function(){
           userName = "name";
@@ -240,7 +270,7 @@ describe("NCMB Users", function(){
             password = "passwd";
             user = new ncmb.User({password: password});
           });
-         
+
           it("callback でログインエラーを取得できる", function(done){
             user.login(function(err, data){
               if(!err){
@@ -268,7 +298,7 @@ describe("NCMB Users", function(){
             userName = "name";
             user = new ncmb.User({userName: userName});
           });
-         
+
           it("callback でログインエラーを取得できる", function(done){
             user.login(function(err, data){
               if(!err){
@@ -295,9 +325,9 @@ describe("NCMB Users", function(){
           beforeEach(function(){
             userName  = null;
             password = "passwd";
-            user = new ncmb.User({userName: userName, password: password}); 
+            user = new ncmb.User({userName: userName, password: password});
           });
-         
+
           it("callback でログインエラーを取得できる", function(done){
             user.login(function(err, data){
               if(!err){
@@ -324,9 +354,9 @@ describe("NCMB Users", function(){
           beforeEach(function(){
             userName  = "name";
             password = null;
-            user = new ncmb.User({userName: userName, password: password}); 
+            user = new ncmb.User({userName: userName, password: password});
           });
-         
+
           it("callback でログインエラーを取得できる", function(done){
             user.login(function(err, data){
               if(!err){
@@ -423,7 +453,7 @@ describe("NCMB Users", function(){
               password = "passwd";
               user = new ncmb.User({password: password});
             });
-           
+
             it("callback でログインエラーを取得できる", function(done){
               ncmb.User.login(user, function(err, data){
                 if(!err){
@@ -451,7 +481,7 @@ describe("NCMB Users", function(){
               userName = "name";
               user = new ncmb.User({userName: userName});
             });
-           
+
             it("callback でログインエラーを取得できる", function(done){
               ncmb.User.login(user, function(err, data){
                 if(!err){
@@ -478,9 +508,9 @@ describe("NCMB Users", function(){
             beforeEach(function(){
               userName  = null;
               password = "passwd";
-              user = new ncmb.User({userName: userName, password: password}); 
+              user = new ncmb.User({userName: userName, password: password});
             });
-           
+
             it("callback でログインエラーを取得できる", function(done){
               ncmb.User.login(user, function(err, data){
                 if(!err){
@@ -507,9 +537,9 @@ describe("NCMB Users", function(){
             beforeEach(function(){
               userName  = "name";
               password = null;
-              user = new ncmb.User({userName: userName, password: password}); 
+              user = new ncmb.User({userName: userName, password: password});
             });
-           
+
             it("callback でログインエラーを取得できる", function(done){
               ncmb.User.login(user, function(err, data){
                 if(!err){
@@ -534,7 +564,7 @@ describe("NCMB Users", function(){
           });
         });
       });
-      
+
       context("userName, password でログインした場合", function(){
         context("userName, passwordが存在すればログインに成功して", function(){
           beforeEach(function(){
@@ -748,6 +778,35 @@ describe("NCMB Users", function(){
       });
     });
 
+    context("appleアカウントで登録に成功した場合", function(){
+      beforeEach(function(){
+        user = new ncmb.User({});
+        providerData = {
+          id : "100002415159782",
+          access_token: "CAACEdEose0cBAMHWz6HxQSeXJexFhxmfC3rUswuC4G5rcKiTnzdNIRZBJnmnbjVxSAbAZBP6MXKy6gTuPZBVmUEUJ6TgdwY4sCoNNZCIuXJb4EbrJvAPrAvi1KmHXbkiArmC1pro30Eqdbt94YnNz5WsvlAeYKZCZC0ApDuKJpg41ykMuhAO6kvsudbiFkMjNRotp0yLGf1AZDZD",
+          client_id: "com.apple.signin-apple"
+        };
+        provider = "apple";
+      });
+      it("callback でレスポンスを取得できる", function(done){
+        user.signUpWith(provider, providerData, function(err, data){
+          expect(data).to.have.property("objectId", "ilxN1s7foH2X4b5h");
+          done(err ? err : null);
+        });
+      });
+
+      it("promise でレスポンスを取得できる", function(done){
+        user.signUpWith(provider, providerData)
+        .then(function(data){
+          expect(data).to.have.property("objectId", "ilxN1s7foH2X4b5h");
+          done();
+        })
+        .catch(function(err){
+          done(err);
+        });
+      });
+    });
+
     context("authDataプロパティを直接設定した場合ログインに成功して", function(){
       beforeEach(function(){
         providerData = {
@@ -814,7 +873,7 @@ describe("NCMB Users", function(){
             access_token: "CAACEdEose0cBAMHWz6HxQSeXJexFhxmfC3rUswuC4G5rcKiTnzdNIRZBJnmnbjVxSAbAZBP6MXKy6gTuPZBVmUEUJ6TgdwY4sCoNNZCIuXJb4EbrJvAPrAvi1KmHXbkiArmC1pro30Eqdbt94YnNz5WsvlAeYKZCZC0ApDuKJpg41ykMuhAO6kvsudbiFkMjNRotp0yLGf1AZDZD",
             expiration_date: {"__type":"Date","iso":"2013-08-31T07:41:11.906Z"}
           };
-          provider = "nifty";
+          provider = "Ncmb";
         });
         it("callback で登録時エラーを取得できる", function(done){
           user.signUpWith(provider, providerData, function(err, data){
@@ -889,6 +948,68 @@ describe("NCMB Users", function(){
           });
         });
       });
+
+      context("Signupwith apple id error", function(){
+
+        beforeEach(function(){
+          user = new ncmb.User({});
+          provider = "apple";
+        });
+
+        it("promise signUpWith apple id duplicate error", function(done){
+          providerData = {
+            id : "apple_duplicate_error",
+            access_token: "apple_access_token_duplicate",
+            client_id: "com.apple.signin-apple"
+          };
+          user.signUpWith(provider, providerData)
+          .then(function(data){
+            console.log(data);
+            done(new Error("失敗すべき"));
+          })
+          .catch(function(err){
+            expect(err.code).eql("E409001");
+            expect(err.error).eql("authData is duplication.");
+            done();
+          });
+        });
+
+        it("promise signUpWith apple id authentication error", function(done){
+          providerData = {
+            id : "apple_authentication_error",
+            access_token: "apple_access_token_authentication",
+            client_id: "com.apple.signin-apple"
+          };
+          user.signUpWith(provider, providerData)
+          .then(function(data){
+            done(new Error("失敗すべき"));
+          })
+          .catch(function(err){
+            expect(err.code).eql("E401003");
+            expect(err.error).eql("OAuth apple authentication error.");
+            done();
+          });
+        });
+
+        it("promise signUpWith apple id item settings error", function(done){
+          providerData = {
+            id : "apple_item_settings_error",
+            access_token: "apple_access_token_item_settings",
+            client_id: "com.apple.signin-apple"
+          };
+          user.signUpWith(provider, providerData)
+          .then(function(data){
+            done(new Error("失敗すべき"));
+          })
+          .catch(function(err){
+            expect(err.code).eql("E403005");
+            expect(err.error).eql("apple must not be entered.");
+            done();
+          });
+        });
+
+      });
+
       context("ID/PWログインと競合した場合", function(){
         beforeEach(function(){
           user = new ncmb.User({userName:"username"});
@@ -918,6 +1039,137 @@ describe("NCMB Users", function(){
           });
         });
       });
+
+      context("User.linkWith", function(){
+        beforeEach(function(){
+          user = new ncmb.User({objectId:"objectid", sessionToken:"h6dx5pQIwc0jEDt1oTtPjemPe"});
+          providerData = {
+            id : "100002415159782",
+            access_token: "CAACEdEose0cBAMHWz6HxQSeXJexFhxmfC3rUswuC4G5rcKiTnzdNIRZBJnmnbjVxSAbAZBP6MXKy6gTuPZBVmUEUJ6TgdwY4sCoNNZCIuXJb4EbrJvAPrAvi1KmHXbkiArmC1pro30Eqdbt94YnNz5WsvlAeYKZCZC0ApDuKJpg41ykMuhAO6kvsudbiFkMjNRotp0yLGf1AZDZD",
+            client_id: "com.apple.signin-apple"
+          };
+          provider = "apple";
+        });
+        it("callback linkWith apple id", function(done){
+          user.linkWith(provider, providerData, function(err, data){
+            expect(data).to.have.property("sessionToken", "h6dx5pQIwc0jEDt1oTtPjemPe");
+            var expectedAuthData = {"apple":providerData};
+            var authDataResponse = data["authData"];
+            expect(authDataResponse).to.deep.include(expectedAuthData);
+            done();
+          });
+        });
+
+        it("promise linkWith apple id", function(done){
+          user.linkWith(provider, providerData)
+          .then(function(data){
+            expect(data).to.have.property("sessionToken", "h6dx5pQIwc0jEDt1oTtPjemPe");
+            var expectedAuthData = {"apple":providerData};
+            var authDataResponse = data["authData"];
+            expect(authDataResponse).to.deep.include(expectedAuthData);
+            done();
+          })
+          .catch(function(err){
+            done(err);
+          });
+        });
+      });
+
+      context("User.linkWith.error", function(){
+        beforeEach(function(){
+          user = new ncmb.User({objectId:"objectid", sessionToken:"h6dx5pQIwc0jEDt1oTtPjemPe"});
+          provider = "apple";
+        });
+
+        it("promise linkWith apple id duplicate error", function(done){
+          providerData = {
+            id : "apple_duplicate_error",
+            access_token: "apple_access_token_duplicate",
+            client_id: "com.apple.signin-apple"
+          };
+          user.linkWith(provider, providerData)
+          .then(function(data){
+            done(new Error("失敗すべき"));
+          })
+          .catch(function(err){
+            expect(err.code).eql("E409001");
+            expect(err.error).eql("authData is duplication.");
+            done();
+          });
+        });
+
+        it("promise linkWith apple id authentication error", function(done){
+          providerData = {
+            id : "apple_authentication_error",
+            access_token: "apple_access_token_authentication",
+            client_id: "com.apple.signin-apple"
+          };
+          user.linkWith(provider, providerData)
+          .then(function(data){
+            done(new Error("失敗すべき"));
+          })
+          .catch(function(err){
+            expect(err.code).eql("E401003");
+            expect(err.error).eql("OAuth apple authentication error.");
+            done();
+          });
+        });
+
+        it("promise linkWith apple id item settings error", function(done){
+          providerData = {
+            id : "apple_item_settings_error",
+            access_token: "apple_access_token_item_settings",
+            client_id: "com.apple.signin-apple"
+          };
+          user.linkWith(provider, providerData)
+          .then(function(data){
+            done(new Error("失敗すべき"));
+          })
+          .catch(function(err){
+            expect(err.code).eql("E403005");
+            expect(err.error).eql("apple must not be entered.");
+            done();
+          });
+        });
+
+      });
+
+      context("User.unLinkWith", function(){
+        beforeEach(function(){
+          providerData = {
+            id : "100002415159782",
+            access_token: "CAACEdEose0cBAMHWz6HxQSeXJexFhxmfC3rUswuC4G5rcKiTnzdNIRZBJnmnbjVxSAbAZBP6MXKy6gTuPZBVmUEUJ6TgdwY4sCoNNZCIuXJb4EbrJvAPrAvi1KmHXbkiArmC1pro30Eqdbt94YnNz5WsvlAeYKZCZC0ApDuKJpg41ykMuhAO6kvsudbiFkMjNRotp0yLGf1AZDZD",
+            client_id: "com.apple.signin-apple"
+          };
+          provider = "apple";
+          var authData = {"apple":providerData};
+          user = new ncmb.User({objectId:"objectid", sessionToken:"h6dx5pQIwc0jEDt1oTtPjemPe", authData:authData});
+        });
+        it("callback unLinkWith apple id", function(done){
+          user.unLinkWith(provider, function(err, data){
+            expect(data).to.have.property("sessionToken", "h6dx5pQIwc0jEDt1oTtPjemPe");
+            var expectedAuthData = {"apple": null};
+            var authDataResponse = data["authData"];
+            expect(authDataResponse).to.deep.include(expectedAuthData);
+            done();
+          });
+        });
+
+        it("promise unLinkWith apple id", function(done){
+          user.unLinkWith(provider)
+          .then(function(data){
+            expect(data).to.have.property("sessionToken", "h6dx5pQIwc0jEDt1oTtPjemPe");
+            var expectedAuthData = {"apple": null};
+            var authDataResponse = data["authData"];
+            expect(authDataResponse).to.deep.include(expectedAuthData);
+            done();
+          })
+          .catch(function(err){
+            done(err);
+          });
+        });
+      });
+
     });
   });
 
@@ -1007,6 +1259,34 @@ describe("NCMB Users", function(){
           user.loginWith(provider, providerData)
           .then(function(data){
             expect(data).to.have.property("sessionToken", "bfHuZvZ9vXZaCfMZ7fBrRnvru");
+            done();
+          })
+          .catch(function(err){
+            done(err);
+          });
+        });
+      });
+
+      context("provider, providerDataを入力した場合appleログインに成功して", function(){
+        beforeEach(function(){
+          provider = "apple";
+          providerData = {
+            id: "100002415159782",
+            access_token: "CAACEdEose0cBAMHWz6HxQSeXJexFhxmfC3rUswuC4G5rcKiTnzdNIRZBJnmnbjVxSAbAZBP6MXKy6gTuPZBVmUEUJ6TgdwY4sCoNNZCIuXJb4EbrJvAPrAvi1KmHXbkiArmC1pro30Eqdbt94YnNz5WsvlAeYKZCZC0ApDuKJpg41ykMuhAO6kvsudbiFkMjNRotp0yLGf1AZDZD",
+            client_id: "com.apple.signin-apple"
+          };
+          user = new ncmb.User();
+        });
+        it("callback でレスポンスを取得できる", function(done){
+          user.loginWith(provider, providerData, function(err, data){
+            expect(data).to.have.property("sessionToken", "h6dx5pQIwc0jEDt1oTtPjemPe");
+            done(err ? err : null);
+          });
+        });
+        it("promise でレスポンスを取得できる", function(done){
+          user.loginWith(provider, providerData)
+          .then(function(data){
+            expect(data).to.have.property("sessionToken", "h6dx5pQIwc0jEDt1oTtPjemPe");
             done();
           })
           .catch(function(err){
@@ -1107,6 +1387,36 @@ describe("NCMB Users", function(){
         });
       });
 
+      context("authDataプロパティにappleの認証情報があればログインに成功して", function(){
+        beforeEach(function(){
+          provider = "apple";
+          providerData = {
+            id: "100002415159782",
+            access_token: "CAACEdEose0cBAMHWz6HxQSeXJexFhxmfC3rUswuC4G5rcKiTnzdNIRZBJnmnbjVxSAbAZBP6MXKy6gTuPZBVmUEUJ6TgdwY4sCoNNZCIuXJb4EbrJvAPrAvi1KmHXbkiArmC1pro30Eqdbt94YnNz5WsvlAeYKZCZC0ApDuKJpg41ykMuhAO6kvsudbiFkMjNRotp0yLGf1AZDZD",
+            client_id: "com.apple.signin-apple"
+          };
+          user = new ncmb.User();
+          user.authData = {};
+          user.authData[provider] = providerData;
+        });
+        it("callback でレスポンスを取得できる", function(done){
+          user.loginWith(function(err, data){
+            expect(data).to.have.property("sessionToken", "h6dx5pQIwc0jEDt1oTtPjemPe");
+            done(err ? err : null);
+          });
+        });
+        it("promise でレスポンスを取得できる", function(done){
+          user.loginWith()
+          .then(function(data){
+            expect(data).to.have.property("sessionToken", "h6dx5pQIwc0jEDt1oTtPjemPe");
+            done();
+          })
+          .catch(function(err){
+            done(err);
+          });
+        });
+      });
+
       context("authDataプロパティに複数の認証情報があれば、指定したproviderでログインに成功して", function(){
         var secondProvider = null;
         var secondProviderData = null;
@@ -1119,8 +1429,8 @@ describe("NCMB Users", function(){
           };
           secondProvider = "google";
           secondProviderData = {
-            id:"342304547393343184783", 
-            access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM" 
+            id:"342304547393343184783",
+            access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM"
           };
           user = new ncmb.User();
           user.authData = {};
@@ -1337,7 +1647,7 @@ describe("NCMB Users", function(){
 
         context("providerが不正だった場合", function(){
           beforeEach(function(){
-            provider = "nifty";
+            provider = "Ncmb";
             providerData = {
               id: "100002415159782",
               access_token: "CAACEdEose0cBAMHWz6HxQSeXJexFhxmfC3rUswuC4G5rcKiTnzdNIRZBJnmnbjVxSAbAZBP6MXKy6gTuPZBVmUEUJ6TgdwY4sCoNNZCIuXJb4EbrJvAPrAvi1KmHXbkiArmC1pro30Eqdbt94YnNz5WsvlAeYKZCZC0ApDuKJpg41ykMuhAO6kvsudbiFkMjNRotp0yLGf1AZDZD",
@@ -1394,7 +1704,7 @@ describe("NCMB Users", function(){
 
         context("authDataプロパティのproviderが不正だった場合", function(){
           beforeEach(function(){
-            provider = "nifty";
+            provider = "Ncmb";
             providerData = {
               id: "100002415159782",
               access_token: "CAACEdEose0cBAMHWz6HxQSeXJexFhxmfC3rUswuC4G5rcKiTnzdNIRZBJnmnbjVxSAbAZBP6MXKy6gTuPZBVmUEUJ6TgdwY4sCoNNZCIuXJb4EbrJvAPrAvi1KmHXbkiArmC1pro30Eqdbt94YnNz5WsvlAeYKZCZC0ApDuKJpg41ykMuhAO6kvsudbiFkMjNRotp0yLGf1AZDZD",
@@ -1455,10 +1765,10 @@ describe("NCMB Users", function(){
           beforeEach(function(){
             provider = "twitter";
             providerData = {
-              id: "887423302", 
-              screen_name: "mobileBackend", 
-              oauth_consumer_key: "ZoL16IzyCEEik4nNTEN9RW", 
-              consumer_secret: "ubFWbG0wL7bub7gnWSkAKAmXj6VZ97DpmK2ZSCc5Opk", 
+              id: "887423302",
+              screen_name: "mobileBackend",
+              oauth_consumer_key: "ZoL16IzyCEEik4nNTEN9RW",
+              consumer_secret: "ubFWbG0wL7bub7gnWSkAKAmXj6VZ97DpmK2ZSCc5Opk",
               oauth_token: "887423106-VxW8foViKjNDOyCLcC0WhTIyxUo2r3eXLLeogUtB"
             };
             user = new ncmb.User();
@@ -1486,7 +1796,35 @@ describe("NCMB Users", function(){
           beforeEach(function(){
             provider = "google";
             providerData = {
-              access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM" 
+              access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM"
+            };
+            user = new ncmb.User();
+          });
+          it("callback でログインエラーを取得できる", function(done){
+            user.loginWith(provider, providerData, function(err, data){
+              if(!err) done(new Error("失敗すべき"));
+              expect(err).to.be.an.instanceof(Error);
+              done();
+            });
+          });
+          it("promise でログインエラーを取得できる", function(done){
+            user.loginWith(provider, providerData)
+            .then(function(data){
+              done(new Error("失敗すべき"));
+            })
+            .catch(function(err){
+              expect(err).to.be.an.instanceof(Error);
+              done();
+            });
+          });
+        });
+
+        context("appleログインでproviderDataが不正だった場合", function(){
+          beforeEach(function(){
+            provider = "apple";
+            providerData = {
+              id: "100002415159782",
+              access_token: "CAACEdEose0cBAMHWz6HxQSeXJexFhxmfC3rUswuC4G5rcKiTnzdNIRZBJnmnbjVxSAbAZBP6MXKy6gTuPZBVmUEUJ6TgdwY4sCoNNZCIuXJb4EbrJvAPrAvi1KmHXbkiArmC1pro30Eqdbt94YnNz5WsvlAeYKZCZC0ApDuKJpg41ykMuhAO6kvsudbiFkMjNRotp0yLGf1AZDZD"
             };
             user = new ncmb.User();
           });
@@ -1543,10 +1881,10 @@ describe("NCMB Users", function(){
           beforeEach(function(){
             provider = "twitter";
             providerData = {
-              id: "887423302", 
-              screen_name: "mobileBackend", 
-              oauth_consumer_key: "ZoL16IzyCEEik4nNTEN9RW", 
-              consumer_secret: "ubFWbG0wL7bub7gnWSkAKAmXj6VZ97DpmK2ZSCc5Opk", 
+              id: "887423302",
+              screen_name: "mobileBackend",
+              oauth_consumer_key: "ZoL16IzyCEEik4nNTEN9RW",
+              consumer_secret: "ubFWbG0wL7bub7gnWSkAKAmXj6VZ97DpmK2ZSCc5Opk",
               oauth_token: "887423106-VxW8foViKjNDOyCLcC0WhTIyxUo2r3eXLLeogUtB"
             };
             user = new ncmb.User();
@@ -1576,7 +1914,37 @@ describe("NCMB Users", function(){
           beforeEach(function(){
             provider = "google";
             providerData = {
-              access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM" 
+              access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM"
+            };
+            user = new ncmb.User();
+            user.authData = {};
+            user.authData[provider] = providerData;
+          });
+          it("callback でログインエラーを取得できる", function(done){
+            user.loginWith(function(err, data){
+              if(!err) done(new Error("失敗すべき"));
+              expect(err).to.be.an.instanceof(Error);
+              done();
+            });
+          });
+          it("promise でログインエラーを取得できる", function(done){
+            user.loginWith()
+            .then(function(data){
+              done(new Error("失敗すべき"));
+            })
+            .catch(function(err){
+              expect(err).to.be.an.instanceof(Error);
+              done();
+            });
+          });
+        });
+
+        context("appleログインでauthDataプロパティのproviderDataが不正だった場合", function(){
+          beforeEach(function(){
+            provider = "apple";
+            providerData = {
+              id: "100002415159782",
+              access_token: "CAACEdEose0cBAMHWz6HxQSeXJexFhxmfC3rUswuC4G5rcKiTnzdNIRZBJnmnbjVxSAbAZBP6MXKy6gTuPZBVmUEUJ6TgdwY4sCoNNZCIuXJb4EbrJvAPrAvi1KmHXbkiArmC1pro30Eqdbt94YnNz5WsvlAeYKZCZC0ApDuKJpg41ykMuhAO6kvsudbiFkMjNRotp0yLGf1AZDZD"
             };
             user = new ncmb.User();
             user.authData = {};
@@ -1613,8 +1981,8 @@ describe("NCMB Users", function(){
             };
             secondProvider = "google";
             secondProviderData = {
-              id:"342304547393343184783", 
-              access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM" 
+              id:"342304547393343184783",
+              access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM"
             };
             user = new ncmb.User();
             user.authData = {};
@@ -1679,10 +2047,10 @@ describe("NCMB Users", function(){
           beforeEach(function(){
             provider = "twitter";
             providerData = {
-              id: "887423302", 
-              screen_name: "mobileBackend", 
-              oauth_consumer_key: "ZoL16IzyCEEik4nNTEN9RW", 
-              consumer_secret: "ubFWbG0wL7bub7gnWSkAKAmXj6VZ97DpmK2ZSCc5Opk", 
+              id: "887423302",
+              screen_name: "mobileBackend",
+              oauth_consumer_key: "ZoL16IzyCEEik4nNTEN9RW",
+              consumer_secret: "ubFWbG0wL7bub7gnWSkAKAmXj6VZ97DpmK2ZSCc5Opk",
               oauth_token: "887423106-VxW8foViKjNDOyCLcC0WhTIyxUo2r3eXLLeogUtB",
               oauth_token_secret: "gye4VHfEHHBCH34cEJGiAWlukGAEJ6DCixYNU6Mg"
             };
@@ -1712,8 +2080,8 @@ describe("NCMB Users", function(){
           beforeEach(function(){
             provider = "google";
             providerData = {
-              id:"342304547393343184783", 
-              access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM" 
+              id:"342304547393343184783",
+              access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM"
             };
             user = new ncmb.User();
             user.authData = {};
@@ -1737,6 +2105,36 @@ describe("NCMB Users", function(){
           });
         });
 
+        context("authDataプロパティにappleの認証情報があればログインに成功して", function(){
+          beforeEach(function(){
+            provider = "apple";
+            providerData = {
+              id: "100002415159782",
+              access_token: "CAACEdEose0cBAMHWz6HxQSeXJexFhxmfC3rUswuC4G5rcKiTnzdNIRZBJnmnbjVxSAbAZBP6MXKy6gTuPZBVmUEUJ6TgdwY4sCoNNZCIuXJb4EbrJvAPrAvi1KmHXbkiArmC1pro30Eqdbt94YnNz5WsvlAeYKZCZC0ApDuKJpg41ykMuhAO6kvsudbiFkMjNRotp0yLGf1AZDZD",
+              client_id: "com.apple.signin-apple"
+            };
+            user = new ncmb.User();
+            user.authData = {};
+            user.authData[provider] = providerData;
+          });
+          it("callback でレスポンスを取得できる", function(done){
+            ncmb.User.loginWith(user, function(err, data){
+              expect(data).to.have.property("sessionToken", "h6dx5pQIwc0jEDt1oTtPjemPe");
+              done(err ? err : null);
+            });
+          });
+          it("promise でレスポンスを取得できる", function(done){
+            ncmb.User.loginWith(user)
+            .then(function(data){
+              expect(data).to.have.property("sessionToken", "h6dx5pQIwc0jEDt1oTtPjemPe");
+              done();
+            })
+            .catch(function(err){
+              done(err);
+            });
+          });
+        });
+
         context("authDataプロパティに複数の認証情報があれば、指定したproviderでログインに成功して", function(){
           var secondProvider = null;
           var secondProviderData = null;
@@ -1749,8 +2147,8 @@ describe("NCMB Users", function(){
             };
             secondProvider = "google";
             secondProviderData = {
-              id:"342304547393343184783", 
-              access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM" 
+              id:"342304547393343184783",
+              access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM"
             };
             user = new ncmb.User();
             user.authData = {};
@@ -1810,7 +2208,7 @@ describe("NCMB Users", function(){
 
           context("authDataプロパティのproviderが不正だった場合", function(){
             beforeEach(function(){
-              provider = "nifty";
+              provider = "Ncmb";
               providerData = {
                 id: "100002415159782",
                 access_token: "CAACEdEose0cBAMHWz6HxQSeXJexFhxmfC3rUswuC4G5rcKiTnzdNIRZBJnmnbjVxSAbAZBP6MXKy6gTuPZBVmUEUJ6TgdwY4sCoNNZCIuXJb4EbrJvAPrAvi1KmHXbkiArmC1pro30Eqdbt94YnNz5WsvlAeYKZCZC0ApDuKJpg41ykMuhAO6kvsudbiFkMjNRotp0yLGf1AZDZD",
@@ -1873,10 +2271,10 @@ describe("NCMB Users", function(){
             beforeEach(function(){
               provider = "twitter";
               providerData = {
-                id: "887423302", 
-                screen_name: "mobileBackend", 
-                oauth_consumer_key: "ZoL16IzyCEEik4nNTEN9RW", 
-                consumer_secret: "ubFWbG0wL7bub7gnWSkAKAmXj6VZ97DpmK2ZSCc5Opk", 
+                id: "887423302",
+                screen_name: "mobileBackend",
+                oauth_consumer_key: "ZoL16IzyCEEik4nNTEN9RW",
+                consumer_secret: "ubFWbG0wL7bub7gnWSkAKAmXj6VZ97DpmK2ZSCc5Opk",
                 oauth_token: "887423106-VxW8foViKjNDOyCLcC0WhTIyxUo2r3eXLLeogUtB"
               };
               user = new ncmb.User();
@@ -1906,7 +2304,37 @@ describe("NCMB Users", function(){
             beforeEach(function(){
               provider = "google";
               providerData = {
-                access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM" 
+                access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM"
+              };
+              user = new ncmb.User();
+              user.authData = {};
+              user.authData[provider] = providerData;
+            });
+            it("callback でログインエラーを取得できる", function(done){
+              ncmb.User.loginWith(user, function(err, data){
+                if(!err) done(new Error("失敗すべき"));
+                expect(err).to.be.an.instanceof(Error);
+                done();
+              });
+            });
+            it("promise でログインエラーを取得できる", function(done){
+              ncmb.User.loginWith(user)
+              .then(function(data){
+                done(new Error("失敗すべき"));
+              })
+              .catch(function(err){
+                expect(err).to.be.an.instanceof(Error);
+                done();
+              });
+            });
+          });
+
+          context("appleログインでauthDataプロパティのproviderDataが不正だった場合", function(){
+            beforeEach(function(){
+              provider = "apple";
+              providerData = {
+                id: "100002415159782",
+                access_token: "CAACEdEose0cBAMHWz6HxQSeXJexFhxmfC3rUswuC4G5rcKiTnzdNIRZBJnmnbjVxSAbAZBP6MXKy6gTuPZBVmUEUJ6TgdwY4sCoNNZCIuXJb4EbrJvAPrAvi1KmHXbkiArmC1pro30Eqdbt94YnNz5WsvlAeYKZCZC0ApDuKJpg41ykMuhAO6kvsudbiFkMjNRotp0yLGf1AZDZD"
               };
               user = new ncmb.User();
               user.authData = {};
@@ -1943,8 +2371,8 @@ describe("NCMB Users", function(){
               };
               secondProvider = "google";
               secondProviderData = {
-                id:"342304547393343184783", 
-                access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM" 
+                id:"342304547393343184783",
+                access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM"
               };
               user = new ncmb.User();
               user.authData = {};
@@ -2005,10 +2433,10 @@ describe("NCMB Users", function(){
           beforeEach(function(){
             provider = "twitter";
             providerData = {
-              id: "887423302", 
-              screen_name: "mobileBackend", 
-              oauth_consumer_key: "ZoL16IzyCEEik4nNTEN9RW", 
-              consumer_secret: "ubFWbG0wL7bub7gnWSkAKAmXj6VZ97DpmK2ZSCc5Opk", 
+              id: "887423302",
+              screen_name: "mobileBackend",
+              oauth_consumer_key: "ZoL16IzyCEEik4nNTEN9RW",
+              consumer_secret: "ubFWbG0wL7bub7gnWSkAKAmXj6VZ97DpmK2ZSCc5Opk",
               oauth_token: "887423106-VxW8foViKjNDOyCLcC0WhTIyxUo2r3eXLLeogUtB",
               oauth_token_secret: "gye4VHfEHHBCH34cEJGiAWlukGAEJ6DCixYNU6Mg"
             };
@@ -2036,8 +2464,8 @@ describe("NCMB Users", function(){
           beforeEach(function(){
             provider = "google";
             providerData = {
-              id:"342304547393343184783", 
-              access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM" 
+              id:"342304547393343184783",
+              access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM"
             };
             user = new ncmb.User();
           });
@@ -2051,6 +2479,44 @@ describe("NCMB Users", function(){
             ncmb.User.loginWith(provider, providerData)
             .then(function(data){
               expect(data).to.have.property("sessionToken", "bfHuZvZ9vXZaCfMZ7fBrRnvru");
+              done();
+            })
+            .catch(function(err){
+              done(err);
+            });
+          });
+        });
+
+        context("provider, providerDataを入力した場合appleログインに成功して", function(){
+          beforeEach(function(){
+            provider = "apple";
+            providerData = {
+              id: "100002415159782",
+              access_token: "CAACEdEose0cBAMHWz6HxQSeXJexFhxmfC3rUswuC4G5rcKiTnzdNIRZBJnmnbjVxSAbAZBP6MXKy6gTuPZBVmUEUJ6TgdwY4sCoNNZCIuXJb4EbrJvAPrAvi1KmHXbkiArmC1pro30Eqdbt94YnNz5WsvlAeYKZCZC0ApDuKJpg41ykMuhAO6kvsudbiFkMjNRotp0yLGf1AZDZD",
+              client_id: "com.apple.signin-apple"
+            };
+            user = new ncmb.User();
+          });
+          it("callback でレスポンスを取得できる", function(done){
+            ncmb.User.loginWith(provider, providerData, function(err, data){
+              var currentUser = ncmb.User.getCurrentUser();
+              expect(currentUser).to.have.property("objectId", "ilxN1s7foH2X4b5h");
+              expect(currentUser).to.have.property("userName", "cmEFG4qlkA");
+              expect(currentUser).to.have.property("sessionToken", "h6dx5pQIwc0jEDt1oTtPjemPe");
+              var authDataResponse = currentUser.authData["apple"];
+              expect(authDataResponse).to.deep.include(providerData);
+              done(err ? err : null);
+            });
+          });
+          it("promise でレスポンスを取得できる", function(done){
+            ncmb.User.loginWith(provider, providerData)
+            .then(function(data){
+              var currentUser = ncmb.User.getCurrentUser();
+              expect(currentUser).to.have.property("objectId", "ilxN1s7foH2X4b5h");
+              expect(currentUser).to.have.property("userName", "cmEFG4qlkA");
+              expect(currentUser).to.have.property("sessionToken", "h6dx5pQIwc0jEDt1oTtPjemPe");
+              var authDataResponse = currentUser.authData["apple"];
+              expect(authDataResponse).to.deep.include(providerData);
               done();
             })
             .catch(function(err){
@@ -2117,7 +2583,7 @@ describe("NCMB Users", function(){
 
           context("providerが不正だった場合", function(){
             beforeEach(function(){
-              provider = "nifty";
+              provider = "Ncmb";
               providerData = {
                 id: "100002415159782",
                 access_token: "CAACEdEose0cBAMHWz6HxQSeXJexFhxmfC3rUswuC4G5rcKiTnzdNIRZBJnmnbjVxSAbAZBP6MXKy6gTuPZBVmUEUJ6TgdwY4sCoNNZCIuXJb4EbrJvAPrAvi1KmHXbkiArmC1pro30Eqdbt94YnNz5WsvlAeYKZCZC0ApDuKJpg41ykMuhAO6kvsudbiFkMjNRotp0yLGf1AZDZD",
@@ -2204,10 +2670,10 @@ describe("NCMB Users", function(){
             beforeEach(function(){
               provider = "twitter";
               providerData = {
-                id: "887423302", 
-                screen_name: "mobileBackend", 
-                oauth_consumer_key: "ZoL16IzyCEEik4nNTEN9RW", 
-                consumer_secret: "ubFWbG0wL7bub7gnWSkAKAmXj6VZ97DpmK2ZSCc5Opk", 
+                id: "887423302",
+                screen_name: "mobileBackend",
+                oauth_consumer_key: "ZoL16IzyCEEik4nNTEN9RW",
+                consumer_secret: "ubFWbG0wL7bub7gnWSkAKAmXj6VZ97DpmK2ZSCc5Opk",
                 oauth_token: "887423106-VxW8foViKjNDOyCLcC0WhTIyxUo2r3eXLLeogUtB"
               };
               user = new ncmb.User();
@@ -2235,7 +2701,35 @@ describe("NCMB Users", function(){
             beforeEach(function(){
               provider = "google";
               providerData = {
-                access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM" 
+                access_token:"ya29.bAoBfwXmAnEqIVVICriUsrV1BDC1BHJJj1G0-CaasIYvKs-_zFBRvnVYQ4n3NC6bFkNIYbw6vf1eXM"
+              };
+              user = new ncmb.User();
+            });
+            it("callback でログインエラーを取得できる", function(done){
+              ncmb.User.loginWith(provider, providerData, function(err, data){
+                if(!err) done(new Error("失敗すべき"));
+                expect(err).to.be.an.instanceof(Error);
+                done();
+              });
+            });
+            it("promise でログインエラーを取得できる", function(done){
+              ncmb.User.loginWith(provider, providerData)
+              .then(function(data){
+                done(new Error("失敗すべき"));
+              })
+              .catch(function(err){
+                expect(err).to.be.an.instanceof(Error);
+                done();
+              });
+            });
+          });
+
+          context("appleログインでproviderDataが不正だった場合", function(){
+            beforeEach(function(){
+              provider = "apple";
+              providerData = {
+                id: "100002415159782",
+                access_token: "CAACEdEose0cBAMHWz6HxQSeXJexFhxmfC3rUswuC4G5rcKiTnzdNIRZBJnmnbjVxSAbAZBP6MXKy6gTuPZBVmUEUJ6TgdwY4sCoNNZCIuXJb4EbrJvAPrAvi1KmHXbkiArmC1pro30Eqdbt94YnNz5WsvlAeYKZCZC0ApDuKJpg41ykMuhAO6kvsudbiFkMjNRotp0yLGf1AZDZD"
               };
               user = new ncmb.User();
             });
@@ -2376,7 +2870,7 @@ describe("NCMB Users", function(){
       });
       context("失敗した理由が", function(){
         context("uuidについて", function(){
-          context("フォーマットが不正な場合", function(){
+          context("フォーマットが不正な場合(文字列の文字数が不正)", function(){
             before(function(){
               uuid = "3dc72085-911b-4798-9707";
               user = new ncmb.User();
@@ -2428,9 +2922,35 @@ describe("NCMB Users", function(){
               });
             });
           });
-          context("区切り以外の記号が含まれる場合", function(){
+          context("区切り以外の記号が含まれる場合（記号）", function(){
             beforeEach(function(){
               uuid = "3dc72085-911b-4798-9707-d69e879a61.5";
+              user = new ncmb.User();
+            });
+            it("callback でログイン時エラーを取得できる", function(done){
+              user.loginAsAnonymous( uuid, function(err, data){
+                if(!err){
+                  done(new Error("失敗すべき"));
+                }else{
+                  expect(err).to.be.an.instanceof(Error);
+                  done();
+                }
+              });
+            });
+            it("promise でログイン時エラーを取得できる", function(done){
+              user.loginAsAnonymous(uuid)
+              .then(function(data){
+                done(new Error("失敗すべき"));
+              })
+              .catch(function(err){
+                expect(err).to.be.an.instanceof(Error);
+                done();
+              });
+            });
+          });
+          context("区切り以外の記号が含まれる場合（g-z）", function(){
+            beforeEach(function(){
+              uuid = "3dc72085-911b-4798-9707-d69e879g6185";
               user = new ncmb.User();
             });
             it("callback でログイン時エラーを取得できる", function(done){
@@ -2671,9 +3191,34 @@ describe("NCMB Users", function(){
               });
             });
           });
-          context("区切り以外の記号が含まれる場合", function(){
+          context("区切り以外の記号が含まれる場合（記号）", function(){
             beforeEach(function(){
               uuid = "3dc72085-911b-4798-9707-d69e879a61.5";
+            });
+            it("callback でログイン時エラーを取得できる", function(done){
+              ncmb.User.loginAsAnonymous( uuid, function(err, data){
+                if(!err){
+                  done(new Error("失敗すべき"));
+                }else{
+                  expect(err).to.be.an.instanceof(Error);
+                  done();
+                }
+              });
+            });
+            it("promise でログイン時エラーを取得できる", function(done){
+              ncmb.User.loginAsAnonymous(uuid)
+              .then(function(data){
+                done(new Error("失敗すべき"));
+              })
+              .catch(function(err){
+                expect(err).to.be.an.instanceof(Error);
+                done();
+              });
+            });
+          });
+          context("区切り以外の記号が含まれる場合（a-g）", function(){
+            beforeEach(function(){
+              uuid = "3dc72085-911b-4798-9707-d69e879a61g5";
             });
             it("callback でログイン時エラーを取得できる", function(done){
               ncmb.User.loginAsAnonymous( uuid, function(err, data){
@@ -2877,7 +3422,7 @@ describe("NCMB Users", function(){
             password = "passwd";
             user = new ncmb.User({password: password});
           });
-         
+
           it("callback でログインエラーを取得できる", function(done){
             user.loginWithMailAddress(function(err, data){
               if(!err) done(new Error("失敗すべき"));
@@ -2902,7 +3447,7 @@ describe("NCMB Users", function(){
             mailAddress = "mail@example.com";
             user = new ncmb.User({mailAddress: mailAddress});
           });
-         
+
           it("callback でログインエラーを取得できる", function(done){
             user.loginWithMailAddress(function(err, data){
               if(!err) done(new Error("失敗すべき"));
@@ -2926,9 +3471,9 @@ describe("NCMB Users", function(){
           beforeEach(function(){
             mailAddress  = null;
             password = "passwd";
-            user = new ncmb.User({mailAddress: mailAddress, password: password}); 
+            user = new ncmb.User({mailAddress: mailAddress, password: password});
           });
-         
+
           it("callback でログインエラーを取得できる", function(done){
             user.loginWithMailAddress(function(err, data){
               if(!err) done(new Error("失敗すべき"));
@@ -2952,9 +3497,9 @@ describe("NCMB Users", function(){
           beforeEach(function(){
             mailAddress  = "mail@example.com";
             password = null;
-            user = new ncmb.User({mailAddress: mailAddress, password: password}); 
+            user = new ncmb.User({mailAddress: mailAddress, password: password});
           });
-         
+
           it("callback でログインエラーを取得できる", function(done){
             user.loginWithMailAddress(function(err, data){
               if(!err) done(new Error("失敗すべき"));
@@ -3032,7 +3577,7 @@ describe("NCMB Users", function(){
               password = "passwd";
               user = new ncmb.User({password: password});
             });
-           
+
             it("callback でログインエラーを取得できる", function(done){
               ncmb.User.loginWithMailAddress(user, function(err, data){
                 if(!err) done(new Error("失敗すべき"));
@@ -3057,7 +3602,7 @@ describe("NCMB Users", function(){
               mailAddress = "mail@example.com";
               user = new ncmb.User({mailAddress: mailAddress});
             });
-           
+
             it("callback でログインエラーを取得できる", function(done){
               ncmb.User.loginWithMailAddress(user, function(err, data){
                 if(!err) done(new Error("失敗すべき"));
@@ -3081,9 +3626,9 @@ describe("NCMB Users", function(){
             beforeEach(function(){
               mailAddress  = null;
               password = "passwd";
-              user = new ncmb.User({mailAddress: mailAddress, password: password}); 
+              user = new ncmb.User({mailAddress: mailAddress, password: password});
             });
-           
+
             it("callback でログインエラーを取得できる", function(done){
               ncmb.User.loginWithMailAddress(user, function(err, data){
                 if(!err) done(new Error("失敗すべき"));
@@ -3107,9 +3652,9 @@ describe("NCMB Users", function(){
             beforeEach(function(){
               mailAddress  = "mail@example.com";
               password = null;
-              user = new ncmb.User({mailAddress: mailAddress, password: password}); 
+              user = new ncmb.User({mailAddress: mailAddress, password: password});
             });
-           
+
             it("callback でログインエラーを取得できる", function(done){
               ncmb.User.loginWithMailAddress(user, function(err, data){
                 if(!err) done(new Error("失敗すべき"));
@@ -3131,7 +3676,7 @@ describe("NCMB Users", function(){
           });
         });
       });
-      
+
       context("mailAddress, password でログインした場合", function(){
         context("mailAddress, passwordが存在すればログインに成功して", function(){
           beforeEach(function(){
@@ -3866,6 +4411,1158 @@ describe("NCMB Users", function(){
                 done(err);
               });
         });
+      });
+    });
+  });
+
+  describe("Fetch when sessionToken error", function(){
+    var currentName = null;
+    var currentPassword = null;
+    context("Current User", function(){
+      it("fetch currentUser when token error", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userDummyLogin";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        ncmb.User.login(user, function(err, data){
+          try{
+            expect(data).to.be.an.instanceof(ncmb.User);
+            expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+            ncmb.sessionToken = null;
+            user = ncmb.User.getCurrentUser();
+
+            ncmb.User.fetchById(user.objectId)
+            .then(function(obj){
+              done(new Error("失敗すべき"));
+            })
+            .catch(function(err){
+              expect(err.code).eql("E401001");
+              expect(err.error).eql("Authentication error by header incorrect");
+              done();
+            });
+          }catch(err){
+            done(err);
+          }
+        });
+      });
+    });
+    context("Datastore", function(){
+      var Drink = null;
+      before(function(){
+        Drink = ncmb.DataStore("drink");
+      });
+      it("fetch dataStore when token error", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "name";
+          currentPassword = "passwd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        ncmb.User.login(user, function(err, data){
+          try{
+            expect(data).to.be.an.instanceof(ncmb.User);
+            expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+            ncmb.sessionToken = null;
+
+            Drink.fetch()
+            .then(function(obj){
+              done(new Error("失敗すべき"));
+            })
+            .catch(function(err){
+              expect(err.code).eql("E401001");
+              expect(err.error).eql("Authentication error by header incorrect");
+              done();
+            });
+
+          }catch(err){
+            done(err);
+          }
+        });
+      });
+    });
+    context("AllowUser", function(){
+      it("fetch user when token error", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "name";
+          currentPassword = "passwd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        ncmb.User.login(user, function(err, data){
+          try{
+            expect(data).to.be.an.instanceof(ncmb.User);
+            expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+            ncmb.sessionToken = null;
+
+            ncmb.User.fetchById("dummyAllowUserId")
+            .then(function(obj){
+              done(new Error("失敗すべき"));
+            })
+            .catch(function(err){
+              expect(err.code).eql("E401001");
+              expect(err.error).eql("Authentication error by header incorrect");
+              done();
+            });
+
+          }catch(err){
+            done(err);
+          }
+        });
+      });
+    });
+  });
+  describe("Fetch when object Not found", function(){
+    var currentName = null;
+    var currentPassword = null;
+    context("Current User", function(){
+      it("fetch current user non exist after login", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "name";
+          currentPassword = "passwd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        ncmb.User.login(user, function(err, data){
+          try{
+            expect(data).to.be.an.instanceof(ncmb.User);
+            expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+
+            ncmb.User.fetchById("usernotfound")
+            .then(function(obj){
+              done(new Error("失敗すべき"));
+            })
+            .catch(function(err){
+              expect(err.code).eql("E404001");
+              expect(err.error).eql("No data available.");
+              done();
+            });
+          }catch(err){
+            done(err);
+          }
+        });
+      });
+    });
+    context("Datastore", function(){
+      var Drink = null;
+      before(function(){
+        Drink = ncmb.DataStore("drinknotfound");
+      });
+      it("fetch object non exist after login", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "name";
+          currentPassword = "passwd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        ncmb.User.login(user, function(err, data){
+          try{
+            expect(data).to.be.an.instanceof(ncmb.User);
+            expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+
+            Drink.fetch()
+            .then(function(obj){
+              done(new Error("失敗すべき"));
+            })
+            .catch(function(err){
+              expect(err.code).eql("E404001");
+              expect(err.error).eql("No data available.");
+              done();
+            });
+
+          }catch(err){
+            done(err);
+          }
+        });
+      });
+    });
+    context("AllowUser", function(){
+      it("fetch user non exist after login", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "name";
+          currentPassword = "passwd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        ncmb.User.login(user, function(err, data){
+          try{
+            expect(data).to.be.an.instanceof(ncmb.User);
+            expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+            ncmb.sessionToken = null;
+
+            ncmb.User.fetchById("dummyAllowUserIdnotfound")
+            .then(function(obj){
+              done(new Error("失敗すべき"));
+            })
+            .catch(function(err){
+              expect(err.code).eql("E404001");
+              expect(err.error).eql("No data available.");
+              done();
+            });
+
+          }catch(err){
+            done(err);
+          }
+        });
+      });
+    });
+  });
+  var data_promise_id  = null;
+  describe("Login", function(){
+    var currentName = null;
+    var currentPassword = null;
+    context("Current User", function(){
+      it("fetch currentUser after login", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        ncmb.User.login(user, function(err, data){
+          try{
+            expect(data).to.be.an.instanceof(ncmb.User);
+            expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+            expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+            expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+            user = ncmb.User.getCurrentUser();
+
+            ncmb.User.fetchById(user.objectId)
+            .then(function(data){
+              expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+              expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+              expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+              done();
+            })
+            .catch(function(err){
+              done(err);
+            });
+          }catch(err){
+            done(err);
+          }
+        });
+      });
+
+    });
+
+    context("Datastore", function(){
+      var Food = null;
+      var food = null;
+      before(function(){
+        Food = ncmb.DataStore("food");
+        food = new Food({key: "value_new"});
+      });
+
+      it("fetch data store after login", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        ncmb.User.login(user, function(err, data){
+          try{
+            expect(data).to.be.an.instanceof(ncmb.User);
+            expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+            expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+            expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+            Food.fetch()
+              .then(function(obj){
+                expect(obj.objectId).to.exist;
+                expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+                expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+                expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+                done();
+              })
+              .catch(function(err){
+                done(err);
+              });
+
+          }catch(err){
+            done(err);
+          }
+        });
+      });
+
+      it("update data store after login", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        ncmb.User.login(user, function(err, data){
+          try{
+            expect(data).to.be.an.instanceof(ncmb.User);
+            expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+            expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+            expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+            food = new Food({key: "value_new"});
+            food.objectId = "object_id";
+            food.update(function(err, obj){
+              if(err){
+                done(err);
+              }else{
+                expect(obj.updateDate).to.exist;
+                expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+                expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+                expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+                done();
+              }
+            });
+          }catch(err){
+            done(err);
+          }
+        });
+      });
+
+      it("add data store after login", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        ncmb.User.login(user, function(err, data){
+          try{
+            expect(data).to.be.an.instanceof(ncmb.User);
+            expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+            expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+            expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+            food = new Food({name: "orange", type: "fruit", status: "success"});
+            food.save()
+            .then(function(obj){
+              expect(obj.objectId).to.exist;
+              data_promise_id = obj.objectId;
+              expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+              expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+              expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+              done();
+            })
+            .catch(function(err){
+              done(err);
+            });
+          }catch(err){
+            done(err);
+          }
+        });
+      });
+
+      it("delete data store after login", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        ncmb.User.login(user, function(err, data){
+          try{
+            expect(data).to.be.an.instanceof(ncmb.User);
+            expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+            expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+            expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+
+            food = new Food();
+            food.objectId = data_promise_id;
+            food.delete()
+            .then(function(){
+              expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+              expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+              expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+              done();
+            })
+            .catch(function(err){
+              done(err);
+            });
+          }catch(err){
+            done(err);
+          }
+        });
+      });
+    });
+
+    context("AllowUser", function(){
+      var name_user = null;
+      beforeEach(function(){
+        name_user = new ncmb.User({userName: "Yamada Tarou", password:"password"});
+      });
+
+      it("fetch allow user after login", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        ncmb.User.login(user, function(err, data){
+          try{
+            expect(data).to.be.an.instanceof(ncmb.User);
+            expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+            expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+            expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+
+            ncmb.User.fetchById("allowUser")
+            .then(function(data){
+              expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+              expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+              expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+              done();
+            })
+            .catch(function(err){
+              done(err);
+            });
+
+          }catch(err){
+            done(err);
+          }
+        });
+      });
+
+      it("update allow user after login", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        ncmb.User.login(user, function(err, data){
+          try{
+            expect(data).to.be.an.instanceof(ncmb.User);
+            expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+            expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+            expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+
+            name_user = new ncmb.User({ objectId:"objectid", updatefield: "updated"});
+            name_user.update()
+            .then(function(data){
+              expect(data.updateDate).to.exist;
+              expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+              expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+              expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+              done();
+            })
+            .catch(function(err){
+              done(err);
+            });
+          }catch(err){
+            done(err);
+          }
+        });
+      });
+
+      it("add allow user after login", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        ncmb.User.login(user, function(err, data){
+          try{
+            expect(data).to.be.an.instanceof(ncmb.User);
+            expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+            expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+            expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+
+            name_user.signUpByAccount()
+            .then(function(obj){
+              expect(obj.objectId).to.exist;
+              expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+              expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+              expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+              done();
+            })
+            .catch(function(err){
+              done(err);
+            });
+
+          }catch(err){
+            done(err);
+          }
+        });
+      });
+
+      it("delete not current user", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        ncmb.User.login(user, function(err, data){
+          try{
+            expect(data).to.be.an.instanceof(ncmb.User);
+            expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+            expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+            expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+
+            var del_user = null;
+            del_user = new ncmb.User({objectId: "object_id"});
+            del_user.delete()
+            .then(function(data){
+              expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+              expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+              expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+              done();
+            })
+            .catch(function(err){
+              done(err);
+            });
+          }catch(err){
+            done(err);
+          }
+        });
+      });
+    });
+  });
+
+  describe("Login logout after that login again.", function(){
+    var currentName = null;
+    var currentPassword = null;
+    context("Current User", function(){
+      it("fetch currentUser after login again", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        // Login first time.
+        ncmb.User.login(user)
+        .then(function(){
+          return ncmb.User.logout();
+        })
+        .then(function(res){
+          expect(ncmb.User.getCurrentUser()).to.be.eql(null);
+
+          // Login second time.
+          user = new ncmb.User({userName:currentName,password:currentPassword});
+          ncmb.User.login(user, function(err, data){
+            try{
+              expect(data).to.be.an.instanceof(ncmb.User);
+              expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+              expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+              expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+              user = ncmb.User.getCurrentUser();
+
+              ncmb.User.fetchById(user.objectId)
+              .then(function(data){
+                expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+                expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+                expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+                done();
+              })
+              .catch(function(err){
+                done(err);
+              });
+            }catch(err){
+              done(err);
+            }
+          });
+        })
+        .catch(function(err){
+          done(err);
+        });
+      });
+
+    });
+
+    context("Datastore", function(){
+      var Food = null;
+      var food = null;
+      before(function(){
+        Food = ncmb.DataStore("food");
+        food = new Food({key: "value_new"});
+      });
+
+      it("fetch data store after login again", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        // Login first time.
+        ncmb.User.login(user)
+        .then(function(){
+          return ncmb.User.logout();
+        })
+        .then(function(res){
+          expect(ncmb.User.getCurrentUser()).to.be.eql(null);
+          // Login second time.
+          user = new ncmb.User({userName:currentName,password:currentPassword});
+          ncmb.User.login(user, function(err, data){
+            try{
+              expect(data).to.be.an.instanceof(ncmb.User);
+              expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+              expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+              expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+              Food.fetch()
+                .then(function(obj){
+                  expect(obj.objectId).to.exist;
+                  expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+                  expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+                  expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+                  done();
+                })
+                .catch(function(err){
+                  done(err);
+                });
+
+            }catch(err){
+              done(err);
+            }
+          });
+        })
+        .catch(function(err){
+          done(err);
+        });
+
+      });
+
+      it("update data store after login again", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        // Login first time.
+        ncmb.User.login(user)
+        .then(function(){
+          return ncmb.User.logout();
+        })
+        .then(function(res){
+          expect(ncmb.User.getCurrentUser()).to.be.eql(null);
+          // Login second time.
+          user = new ncmb.User({userName:currentName,password:currentPassword});
+          ncmb.User.login(user, function(err, data){
+            try{
+              expect(data).to.be.an.instanceof(ncmb.User);
+              expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+              expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+              expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+              food = new Food({key: "value_new"});
+              food.objectId = "object_id";
+              food.update(function(err, obj){
+                if(err){
+                  done(err);
+                }else{
+                  expect(obj.updateDate).to.exist;
+                  expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+                  expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+                  expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+                  done();
+                }
+              });
+
+            }catch(err){
+              done(err);
+            }
+          });
+        })
+        .catch(function(err){
+          done(err);
+        });
+
+      });
+
+      it("add data store after login again", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        // Login first time.
+        ncmb.User.login(user)
+        .then(function(){
+          return ncmb.User.logout();
+        })
+        .then(function(res){
+          expect(ncmb.User.getCurrentUser()).to.be.eql(null);
+          // Login second time.
+          user = new ncmb.User({userName:currentName,password:currentPassword});
+          ncmb.User.login(user, function(err, data){
+            try{
+              expect(data).to.be.an.instanceof(ncmb.User);
+              expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+              expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+              expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+              food = new Food({name: "orange", type: "fruit", status: "success"});
+              food.save()
+              .then(function(obj){
+                expect(obj.objectId).to.exist;
+                data_promise_id = obj.objectId;
+                expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+                expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+                expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+                done();
+              })
+              .catch(function(err){
+                done(err);
+              });
+            }catch(err){
+              done(err);
+            }
+          });
+        })
+        .catch(function(err){
+          done(err);
+        });
+
+      });
+
+      it("delete data store after login again", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        // Login first time.
+        ncmb.User.login(user)
+        .then(function(){
+          return ncmb.User.logout();
+        })
+        .then(function(res){
+          expect(ncmb.User.getCurrentUser()).to.be.eql(null);
+          // Login second time.
+          user = new ncmb.User({userName:currentName,password:currentPassword});
+          ncmb.User.login(user, function(err, data){
+            try{
+              expect(data).to.be.an.instanceof(ncmb.User);
+              expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+              expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+              expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+
+              food = new Food();
+              food.objectId = data_promise_id;
+              food.delete()
+              .then(function(){
+                expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+                expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+                expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+                done();
+              })
+              .catch(function(err){
+                done(err);
+              });
+
+            }catch(err){
+              done(err);
+            }
+          });
+        })
+        .catch(function(err){
+          done(err);
+        });
+
+      });
+
+    });
+
+    context("AllowUser", function(){
+      var name_user = null;
+      beforeEach(function(){
+        name_user = new ncmb.User({userName: "Yamada Tarou", password:"password"});
+      });
+
+      it("fetch allow user after login again", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        // Login first time.
+        ncmb.User.login(user)
+        .then(function(){
+          return ncmb.User.logout();
+        })
+        .then(function(res){
+          expect(ncmb.User.getCurrentUser()).to.be.eql(null);
+          // Login second time.
+          user = new ncmb.User({userName:currentName,password:currentPassword});
+          ncmb.User.login(user, function(err, data){
+            try{
+              expect(data).to.be.an.instanceof(ncmb.User);
+              expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+              expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+              expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+
+              ncmb.User.fetchById("allowUser")
+              .then(function(data){
+                expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+                expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+                expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+                done();
+              })
+              .catch(function(err){
+                done(err);
+              });
+
+            }catch(err){
+              done(err);
+            }
+          });
+        })
+        .catch(function(err){
+          done(err);
+        });
+
+      });
+
+      it("update allow user after login again", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        // Login first time.
+        ncmb.User.login(user)
+        .then(function(){
+          return ncmb.User.logout();
+        })
+        .then(function(res){
+          expect(ncmb.User.getCurrentUser()).to.be.eql(null);
+          // Login second time.
+          user = new ncmb.User({userName:currentName,password:currentPassword});
+          ncmb.User.login(user, function(err, data){
+            try{
+              expect(data).to.be.an.instanceof(ncmb.User);
+              expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+              expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+              expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+
+              name_user = new ncmb.User({ objectId:"objectid", updatefield: "updated"});
+              name_user.update()
+              .then(function(data){
+                expect(data.updateDate).to.exist;
+                expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+                expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+                expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+                done();
+              })
+              .catch(function(err){
+                done(err);
+              });
+            }catch(err){
+              done(err);
+            }
+          });
+        })
+        .catch(function(err){
+          done(err);
+        });
+
+      });
+
+      it("add allow user after login again", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        // Login first time.
+        ncmb.User.login(user)
+        .then(function(){
+          return ncmb.User.logout();
+        })
+        .then(function(res){
+          expect(ncmb.User.getCurrentUser()).to.be.eql(null);
+          // Login second time.
+          user = new ncmb.User({userName:currentName,password:currentPassword});
+          ncmb.User.login(user, function(err, data){
+            try{
+              expect(data).to.be.an.instanceof(ncmb.User);
+              expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+              expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+              expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+
+              name_user.signUpByAccount()
+              .then(function(obj){
+                expect(obj.objectId).to.exist;
+                expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+                expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+                expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+                done();
+              })
+              .catch(function(err){
+                done(err);
+              });
+
+            }catch(err){
+              done(err);
+            }
+          });
+        })
+        .catch(function(err){
+          done(err);
+        });
+
+      });
+
+      it("delete not current user login again", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        // Login first time.
+        ncmb.User.login(user)
+        .then(function(){
+          return ncmb.User.logout();
+        })
+        .then(function(res){
+          expect(ncmb.User.getCurrentUser()).to.be.eql(null);
+          // Login second time.
+          user = new ncmb.User({userName:currentName,password:currentPassword});
+          ncmb.User.login(user, function(err, data){
+            try{
+              expect(data).to.be.an.instanceof(ncmb.User);
+              expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+              expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+              expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+
+              var del_user = null;
+              del_user = new ncmb.User({objectId: "object_id"});
+              del_user.delete()
+              .then(function(data){
+                expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+                expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+                expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+                done();
+              })
+              .catch(function(err){
+                done(err);
+              });
+            }catch(err){
+              done(err);
+            }
+          });
+        })
+        .catch(function(err){
+          done(err);
+        });
+
+      });
+
+    });
+
+  });
+
+  describe("Login", function () {
+    var name_user = null;
+    beforeEach(function(){
+      name_user = new ncmb.User({userName: "Yamada Tarou", password:"password"});
+    });
+    var currentName = null;
+    var currentPassword = null;
+    context("Current User", function(){
+      it("delete current user", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "name";
+          currentPassword = "passwd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        ncmb.User.login(user, function(err, data){
+          try{
+            expect(data).to.be.an.instanceof(ncmb.User);
+            expect(ncmb.User.getCurrentUser().objectId).to.be.eql("HwwaZ60AOTdKRWyC");
+            expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+            expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("ojUDAfEBgGadVsyQE3XO0yraa");
+            user = ncmb.User.getCurrentUser();
+            user.delete()
+            .then(function(){
+              expect(ncmb.User.getCurrentUser()).to.be.eql(null);
+              done();
+            })
+            .catch(function(err){
+              done(err);
+            });
+          }catch(err){
+            done(err);
+          }
+        });
+      });
+
+      it("update currentUser after login", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        ncmb.User.login(user, function(err, data){
+          try{
+            console.log(err);
+            expect(data).to.be.an.instanceof(ncmb.User);
+            expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+            expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+            expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+            user = ncmb.User.getCurrentUser();
+
+            user.set("updatefield", "updated")
+              .update()
+              .then(function(data){
+                expect(data.updateDate).to.exist;
+                expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+                expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+                expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+                expect(ncmb.User.getCurrentUser()).to.have.property("updatefield");
+                expect(ncmb.User.getCurrentUser().updatefield).to.be.eql("updated");
+                done();
+              })
+              .catch(function(err){
+                done(err);
+              });
+          }catch(err){
+            done(err);
+          }
+        });
+      });
+
+      it("update allow user after login", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "userLoginName";
+          currentPassword = "userPasswd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        ncmb.User.login(user, function(err, data){
+          try{
+            expect(data).to.be.an.instanceof(ncmb.User);
+            expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+            expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+            expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+
+            name_user = new ncmb.User({ objectId:"objectid", updatefield: "updated"});
+            name_user.update()
+            .then(function(data){
+              expect(data.updateDate).to.exist;
+              expect(ncmb.User.getCurrentUser().objectId).to.be.eql("dummyCurrentUserId");
+              expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+              expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("dummySessionToken");
+              expect(ncmb.User.getCurrentUser()).to.not.have.property("updatefield");
+              done();
+            })
+            .catch(function(err){
+              done(err);
+            });
+          }catch(err){
+            done(err);
+          }
+        });
+      });
+    });
+  });
+
+  describe("Login logout after that login again.", function(){
+    var currentName = null;
+    var currentPassword = null;
+    context("Current User", function(){
+      it("delete current user login again", function(done){
+        if(!ncmb.stub){
+          currentName = callback_name;
+          currentPassword = callback_password;
+        }else{
+          currentName = "name";
+          currentPassword = "passwd";
+        }
+        var user = new ncmb.User({userName:currentName,password:currentPassword});
+        // Login first time.
+        ncmb.User.login(user)
+        .then(function(){
+          return ncmb.User.logout();
+        })
+        .then(function(res){
+          expect(ncmb.User.getCurrentUser()).to.be.eql(null);
+          // Login second time.
+          user = new ncmb.User({userName:currentName,password:currentPassword});
+          ncmb.User.login(user, function(err, data){
+            try{
+              expect(data).to.be.an.instanceof(ncmb.User);
+              expect(ncmb.User.getCurrentUser().objectId).to.be.eql("HwwaZ60AOTdKRWyC");
+              expect(ncmb.User.getCurrentUser().userName).to.be.eql(currentName);
+              expect(ncmb.User.getCurrentUser().sessionToken).to.be.eql("ojUDAfEBgGadVsyQE3XO0yraa");
+              user = ncmb.User.getCurrentUser();
+              user.delete()
+              .then(function(){
+                expect(ncmb.User.getCurrentUser()).to.be.eql(null);
+                done();
+              })
+              .catch(function(err){
+                done(err);
+              });
+            }catch(err){
+              done(err);
+            }
+          });
+        })
+        .catch(function(err){
+          done(err);
+        });
+
       });
     });
   });

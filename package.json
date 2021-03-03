@@ -1,16 +1,16 @@
 {
   "name": "ncmb",
-  "description": "JavaScript SDK for NIFCloud mobile backend",
-  "version": "2.2.1",
-  "homepage": "http://mb.cloud.nifty.com/",
+  "description": "JavaScript SDK for NIFCLOUD mobile backend",
+  "version": "3.1.1",
+  "homepage": "https://mbaas.nifcloud.com/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NIFCloud-mbaas/ncmb_js"
+    "url": "git+https://github.com/NIFCLOUD-mbaas/ncmb_js"
   },
   "maintainers": [
     {
-      "name": "NIFCloud mobile backend Team",
-      "url": "http://mb.cloud.nifty.com/support.htm"
+      "name": "NIFCLOUD mobile backend Team",
+      "url": "https://mbaas.nifcloud.com/support.htm"
     }
   ],
   "tags": [
@@ -30,19 +30,20 @@
   "author": "",
   "license": "Apache License Version 2.0",
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
     "create-error": "^0.3.1",
+    "idempotent-babel-polyfill": "^7.0.0",
     "localforage": "^1.2.3",
     "lodash.flatten": "^4.1.1",
     "node-localstorage": "^0.5.1",
     "object-assign": "^3.0.0",
-    "qs": "^2.4.1",
-    "superagent": "^1.8.2",
-    "superagent-proxy": "^0.3.1",
+    "qs": "^6.9.1",
+    "superagent": "^5.0.5",
+    "superagent-proxy": "^2.0.0",
     "url": "^0.10.3"
   },
   "devDependencies": {
-    "babel": "^5.1.8",
+    "babel": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
     "babelify": "^6.0.2",
     "beefy": "^2.1.5",
     "browserify": "^13.1.0",

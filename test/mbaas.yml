@@ -355,6 +355,17 @@
     url: '/2013-09-01/login'
     method: GET
     query:
+      "userName": "test"
+      "password": "test!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~test"
+  response:
+    status: 200
+    file: 2013-09-01_user_login_namepw_success.json
+
+-
+  request:
+    url: '/2013-09-01/login'
+    method: GET
+    query:
       "userName": "Yamada Tarou"
       "password": "password"
   response:
@@ -410,6 +421,42 @@
 
 -
   request:
+    url: /2013-09-01/users
+    method: POST
+    body: {"authData":{"apple":{"id":"100002415159782","access_token":"CAACEdEose0cBAMHWz6HxQSeXJexFhxmfC3rUswuC4G5rcKiTnzdNIRZBJnmnbjVxSAbAZBP6MXKy6gTuPZBVmUEUJ6TgdwY4sCoNNZCIuXJb4EbrJvAPrAvi1KmHXbkiArmC1pro30Eqdbt94YnNz5WsvlAeYKZCZC0ApDuKJpg41ykMuhAO6kvsudbiFkMjNRotp0yLGf1AZDZD","client_id":"com.apple.signin-apple"}}}
+  response:
+    status: 200
+    file: 2013-09-01_classes_users_post_apple_success.json
+
+-
+  request:
+    url: /2013-09-01/users
+    method: POST
+    body: {"authData":{"apple":{"id":"apple_duplicate_error","access_token":"apple_access_token_duplicate","client_id":"com.apple.signin-apple"}}}
+  response:
+    status: 409
+    file: 2013-09-01_authData_duplicate_error.json
+
+-
+  request:
+    url: /2013-09-01/users
+    method: POST
+    body: {"authData":{"apple":{"id":"apple_authentication_error","access_token":"apple_access_token_authentication","client_id":"com.apple.signin-apple"}}}
+  response:
+    status: 401
+    file: 2013-09-01_authentication_error_apple.json
+
+-
+  request:
+    url: /2013-09-01/users
+    method: POST
+    body: {"authData":{"apple":{"id":"apple_item_settings_error","access_token":"apple_access_token_item_settings","client_id":"com.apple.signin-apple"}}}
+  response:
+    status: 403
+    file: 2013-09-01_item_settings_error_apple.json
+
+-
+  request:
     url: /2013-09-01/users/objectid
     method: PUT
     body: {"updatefield": "updated"}
@@ -422,6 +469,63 @@
     url: /2013-09-01/users/objectid
     method: PUT
     body: {"mailAddress": "test@example.com"}
+  response:
+    status: 201
+    file: 2013-09-01_users_update_success.json
+
+-
+  request:
+    url: /2013-09-01/users/aTAe6VXd3ZElDtlG
+    method: PUT
+    body: {"authData":{ "anonymous":{"id":"3dc72085-911b-4798-9707-d69e879a6185"}},"userName":"ljmuJgf4ri","updatefield":"updated"}
+  response:
+    status: 201
+    file: 2013-09-01_users_update_success.json
+
+-
+  request:
+    url: /2013-09-01/users/objectid
+    method: PUT
+    body: {"authData":{"apple":{"id":"apple_duplicate_error","access_token":"apple_access_token_duplicate","client_id":"com.apple.signin-apple"}}}
+  response:
+    status: 409
+    file: 2013-09-01_authData_duplicate_error.json
+
+-
+  request:
+    url: /2013-09-01/users/objectid
+    method: PUT
+    body: {"authData":{"apple":{"id":"apple_authentication_error","access_token":"apple_access_token_authentication","client_id":"com.apple.signin-apple"}}}
+  response:
+    status: 401
+    file: 2013-09-01_authentication_error_apple.json
+
+-
+  request:
+    url: /2013-09-01/users/objectid
+    method: PUT
+    body: {"authData":{"apple":{"id":"apple_item_settings_error","access_token":"apple_access_token_item_settings","client_id":"com.apple.signin-apple"}}}
+  response:
+    status: 403
+    file: 2013-09-01_item_settings_error_apple.json
+
+-
+  request:
+    url: /2013-09-01/users/objectid
+    method: PUT
+    body: {"authData":{"apple":{"id":"100002415159782","access_token":"CAACEdEose0cBAMHWz6HxQSeXJexFhxmfC3rUswuC4G5rcKiTnzdNIRZBJnmnbjVxSAbAZBP6MXKy6gTuPZBVmUEUJ6TgdwY4sCoNNZCIuXJb4EbrJvAPrAvi1KmHXbkiArmC1pro30Eqdbt94YnNz5WsvlAeYKZCZC0ApDuKJpg41ykMuhAO6kvsudbiFkMjNRotp0yLGf1AZDZD","client_id":"com.apple.signin-apple"}}}
+  response:
+    status: 201
+    file: 2013-09-01_users_update_success.json
+
+-
+  request:
+    url: /2013-09-01/users/objectid
+    method: PUT
+    body: 
+      authData:
+        apple: null
+      
   response:
     status: 201
     file: 2013-09-01_users_update_success.json
@@ -499,6 +603,15 @@
 
 -
   request:
+    url: /2013-09-01/users
+    method: POST
+    body: {"authData":{"apple":{"id":"100002415159782","access_token":"CAACEdEose0cBAMHWz6HxQSeXJexFhxmfC3rUswuC4G5rcKiTnzdNIRZBJnmnbjVxSAbAZBP6MXKy6gTuPZBVmUEUJ6TgdwY4sCoNNZCIuXJb4EbrJvAPrAvi1KmHXbkiArmC1pro30Eqdbt94YnNz5WsvlAeYKZCZC0ApDuKJpg41ykMuhAO6kvsudbiFkMjNRotp0yLGf1AZDZD","client_id":"com.apple.signin-apple"}}}
+  response:
+    status: 200
+    file: 2013-09-01_classes_users_post_apple_success.json
+
+-
+  request:
     url: /2013-09-01/logout
     method: GET
   response:
@@ -524,6 +637,13 @@
 -
   request:
     url: /2013-09-01/users/object_id
+    method: DELETE
+  response:
+    status: 200
+    body: '{}'
+-
+  request:
+    url: /2013-09-01/users/aTAe6VXd3ZElDtlG
     method: DELETE
   response:
     status: 200
@@ -1992,3 +2112,119 @@
   response:
     status: 404
     file: 2013-09-01_responseErrorTest_noSuchApplication_error.json
+-
+  request:
+    url: /2013-09-01/users/HwwaZ60AOTdKRWyC
+    method: DELETE
+  response:
+    status: 200
+    body: '{}'
+-
+  request:
+    url: /2013-09-01/users/userlogindummyid
+    method: GET
+  response:
+    status: 401
+    file: 2013-09-01_authentication_error_user.json
+-
+  request:
+    url: /2013-09-01/classes/drink
+    method: GET
+  response:
+    status: 401
+    file: 2013-09-01_authentication_error_user.json
+-
+  request:
+    url: /2013-09-01/users/dummyAllowUserId
+    method: GET
+  response:
+    status: 401
+    file: 2013-09-01_authentication_error_user.json
+-
+  request:
+    url: /2013-09-01/users/usernotfound
+    method: GET
+  response:
+    status: 404
+    file: 2013-09-01_no_data_error.json
+-
+  request:
+    url: /2013-09-01/classes/drinknotfound
+    method: GET
+  response:
+    status: 404
+    file: 2013-09-01_no_data_error.json
+-
+  request:
+    url: /2013-09-01/users/dummyAllowUserIdnotfound
+    method: GET
+  response:
+    status: 404
+    file: 2013-09-01_no_data_error.json
+
+-
+  request:
+    url: '/2013-09-01/login'
+    method: GET
+    query:
+      userName: userLoginName
+      password: userPasswd
+  response:
+    status: 200
+    file: 2013-09-01_user_login_name_password_success.json
+-
+  request:
+    url: /2013-09-01/users/dummyCurrentUserId
+    method: GET
+  response:
+    status: 200
+    file: 2013-09-01_user_login_name_password_success.json
+-
+  request:
+    url: /2013-09-01/users/dummyCurrentUserId
+    method: PUT
+    body: {"userName":"userLoginName","authData":null,"updatefield":"updated"}
+  response:
+    status: 201
+    file: 2013-09-01_users_update_success.json
+-
+  request:
+    url: /2013-09-01/users
+    method: POST
+    body:
+      "userName": "Yamada Tarou"
+      "password": "password"
+      "objectId": "dummyCurrentUserId"
+      "mailAddress": null
+      "mailAddressConfirm": null
+      "sessionToken": "dummySessionToken"
+      "createDate": "2015-05-28T05:55:57.027Z"
+      "updateDate": "2015-05-28T05:56:55.119Z"
+      "authData": null
+  response:
+    status: 201
+    file: 2013-09-01_classes_users_post_idpw_success.json
+-
+  request:
+    url: /2013-09-01/users/dummyCurrentUserId
+    method: DELETE
+  response:
+    status: 200
+    body: '{}'
+-
+  request:
+    url: /2013-09-01/users/allowUser
+    method: GET
+  response:
+    status: 200
+    file: 2013-09-01_user_allow_fetch_success copy.json
+-
+  request:
+    url: '/2013-09-01/login'
+    method: GET
+    query:
+      userName: userDummyLogin
+      password: userPasswd
+  response:
+    status: 200
+    file: 2013-09-01_user_login_name_password_dummyid_success.json
